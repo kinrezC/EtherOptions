@@ -27,6 +27,10 @@ contract EOPT is ERC20, ERC20Detailed, ERC20Mintable {
         _;
     }
 
+    function() public payable {
+        
+    }
+
 
     constructor( 
     uint expirationBlock, 
@@ -70,6 +74,7 @@ contract EOPT is ERC20, ERC20Detailed, ERC20Mintable {
     function mintOption(address owner, uint amount) public onlyProxy {
         _mint(owner, amount);
     }
+
 
     
 }

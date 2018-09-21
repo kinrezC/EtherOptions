@@ -1,14 +1,7 @@
-var EOPT = artifacts.require("./EOPT.sol");
-var EOPTFactory = artifacts.require("EOPTFactory.sol");
-var Proxy = artifacts.require("./Proxy.sol");
+const chai = require("chai");
+const expect = chai.expect;
+const chaiAsPromised = require("chai-as-promised");
+chai.use(chaiAsPromised);
 
-var factoryAddr;
-let deployedContractAddress = [];
-
-contract("EOPTFactory", async accounts => {
-  it("Should deploy proxy contract instance"),
-    async () => {
-      let instance = await EOPTFactory.deployed();
-      factoryAddr = instance.address;
-    };
-});
+const Web3 = require("web3");
+const web3Beta = new Web3(web3.currentProvider);
