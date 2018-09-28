@@ -1,7 +1,41 @@
-const chai = require("chai");
-const expect = chai.expect;
-const chaiAsPromised = require("chai-as-promised");
-chai.use(chaiAsPromised);
+const Factory = artifacts.require("./Factory.sol");
+const Proxy = artifacts.require("./Proxy.sol");
+const EOPT = artifacts.require("./EOPT.sol");
 
-const Web3 = require("web3");
-const web3Beta = new Web3(web3.currentProvider);
+var factoryContract;
+var proxyContract;
+var eoptContract;
+
+contract("Factory", accounts => {
+  it("Creates a proxy contract", async () => {
+    factoryContract = await Factory.new();
+    let _proxy = await factoryContract.proxyAddress();
+    proxyContract = await Proxy.at(_proxy);
+    let savedAddr = await proxyContract.factoryContract();
+
+    assert.equal(savedAddr, factoryContract.address);
+  });
+
+  it("Can mint new options contracts", async () => {
+    //await factoryContract.createContract(10000, 500);
+    //let eopt = await factoryContract.eoptContracts(0);
+    // console.log("eopt address: ", eopt);
+    //eoptContract = await EOPT.at(eopt);
+    //assert.equal(eoptContract.address, eopt);
+  });
+});
+
+contract("EOPT", accounts => {
+  it("deploys successfully", async () => {
+    let eopt = await EOPT.new(
+      "EtherOptions",
+      "EOPT",
+      0,
+      1000,
+      factoryContract.address,
+      10,
+      accounts[0],
+      500
+    );
+  });
+});

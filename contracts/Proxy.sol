@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
-import "openzeppelin-solidity/ownership/Ownable.sol";
-import "openzeppelin-solidity/math/SafeMath.sol";
+import "./ownership/Ownable.sol";
+import "./math/SafeMath.sol";
 
 contract Proxy is Ownable {
     using SafeMath for uint;
@@ -14,9 +14,7 @@ contract Proxy is Ownable {
     uint private _totalSupply;
     address private _factoryContract;
 
-    constructor(address factoryContract) {
-        _factoryContract = factoryContract;
-    }
+    event LOG_OPTION(address indexed optionAddr, uint indexed optionNumber);
 
     modifier isNotExpired() {
         require(_isNotExpired[msg.sender] == true);
@@ -26,6 +24,10 @@ contract Proxy is Ownable {
     modifier onlyFactory() {
         require(msg.sender == _factoryContract);
         _;
+    }
+
+    constructor(address factory) public {
+        _factoryContract = factory;
     }
 
     function totalSupply() public view returns (uint) {
@@ -54,7 +56,10 @@ contract Proxy is Ownable {
 
     function newOptionInstance(address optionAddr) external onlyFactory {
         _contractNumber[optionTypes.length] = optionAddr;
+        uint optionNum = optionTypes.length;
         optionTypes.push(optionAddr);
+
+        emit LOG_OPTION(optionAddr, optionNum);
     }
 
 }

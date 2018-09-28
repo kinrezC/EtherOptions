@@ -1,10 +1,13 @@
 var EOPT = artifacts.require("./EOPT.sol");
-var EOPTFactory = artifacts.require("EOPTFactory.sol");
+var factory = artifacts.require("./Factory.sol");
 var Proxy = artifacts.require("./Proxy.sol");
 
+var _factory;
+var proxyAddr;
+
 module.exports = function(deployer) {
-  deployer.deploy(EOPTFactory.sol).then(async accounts => {
-    var factory = EOPTFactory.deployed();
-    var proxyAddr = await factory.proxyAddress();
+  deployer.deploy(factory).then(async accounts => {
+    _factory = await factory.deployed();
+    proxyAddr = await _factory.proxyAddress();
   });
 };

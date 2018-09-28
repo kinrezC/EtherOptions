@@ -3,17 +3,15 @@ pragma solidity ^0.4.24;
 import "./erc20/ERC20.sol";
 import "./erc20/ERC20Detailed.sol";
 import "./erc20/ERC20Mintable.sol";
-import "openzeppelin-solidity/math/SafeMath.sol";
-import "openzeppelin-solidity/ownership/Ownable.sol";
 
 contract EOPT is ERC20, ERC20Detailed, ERC20Mintable {
-    using SafeMath for uint;
 
     uint private _expirationBlock;
     address private _proxyAddr;
     uint private _contractNumber;
     address private _contractCreator;
-    uint8 private _daiPrice;
+    uint private _daiPrice;
+    bool private _expired;
 
 
     modifier onlyProxy() {
@@ -27,22 +25,24 @@ contract EOPT is ERC20, ERC20Detailed, ERC20Mintable {
         _;
     }
 
-    function() public payable {
-        revert();
+    modifier onlyIfNotExpired() {
+        require(now < _expirationBlock);
+        _;
     }
 
-
     constructor( 
+    string name,
+    string symbol,
+    uint8 decimals,
     uint expirationBlock, 
     address proxyAddr, 
     uint contractNumber,
     address contractCreator,
-    uint8 daiPrice
+    uint daiPrice
     )
     ERC20Mintable() 
-    ERC20Detailed("EtherOptions", "EOPT", 0) 
-    ERC20() {
-        addMinter(proxyAddr);
+    ERC20Detailed(name, symbol, decimals) 
+    ERC20() public {
         _expirationBlock = expirationBlock;
         _proxyAddr = proxyAddr;
         _contractNumber = contractNumber;
@@ -62,7 +62,7 @@ contract EOPT is ERC20, ERC20Detailed, ERC20Mintable {
         return _contractCreator;
     }
 
-    function daiPrice() public view returns (uint8) {
+    function daiPrice() public view returns (uint) {
         return _daiPrice;
     }
 
@@ -72,6 +72,9 @@ contract EOPT is ERC20, ERC20Detailed, ERC20Mintable {
     }
 
     function mintOption(address owner, uint amount) public onlyProxy {
+        if (isMinter(_proxyAddr) == false) {
+            addMinter(_proxyAddr);            
+        }
         _mint(owner, amount);
     }
 
