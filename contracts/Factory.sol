@@ -20,12 +20,11 @@ contract Factory {
     uint daiPrice
     );
     
-    event LOG_PROXYCREATED(address indexed proxyAddr);
+    event LOG_PROXYCREATED (address indexed proxyAddr);
 
     constructor() public {
         _proxy = new Proxy(address(this));
         proxy = Proxy(_proxy);
-       
         emit LOG_PROXYCREATED(_proxy);
     }
 
