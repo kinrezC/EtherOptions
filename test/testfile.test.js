@@ -17,25 +17,10 @@ contract("Factory", accounts => {
   });
 
   it("Can mint new options contracts", async () => {
-    //await factoryContract.createContract(10000, 500);
-    //let eopt = await factoryContract.eoptContracts(0);
-    // console.log("eopt address: ", eopt);
-    //eoptContract = await EOPT.at(eopt);
-    //assert.equal(eoptContract.address, eopt);
-  });
-});
-
-contract("EOPT", accounts => {
-  it("deploys successfully", async () => {
-    let eopt = await EOPT.new(
-      "EtherOptions",
-      "EOPT",
-      0,
-      1000,
-      factoryContract.address,
-      10,
-      accounts[0],
-      500
-    );
+    await factoryContract.createContract(10000, 500);
+    let eopt = await factoryContract.eoptContracts(0);
+    console.log("eopt address: ", eopt);
+    eoptContract = await EOPT.at(eopt);
+    assert.equal(eoptContract.address, eopt);
   });
 });
