@@ -10,6 +10,7 @@ contract Proxy is Ownable {
     mapping (address => bool) private _isNotExpired;
     mapping (address => bool) private _isOptionsContract;
     mapping (address => uint) private _balances;
+    mapping (uint => address) private _contractNumber;
     uint private _totalSupply;
     address private _factoryContract;
 
@@ -52,7 +53,8 @@ contract Proxy is Ownable {
     }
 
     function newOptionInstance(address optionAddr) external onlyFactory {
-
+        _contractNumber[optionTypes.length] = optionAddr;
+        optionTypes.push(optionAddr);
     }
 
 }

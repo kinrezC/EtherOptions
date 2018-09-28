@@ -1,8 +1,8 @@
 pragma solidity ^0.4.24;
 
-import "./ERC20.sol";
-import "./ERC20Detailed.sol";
-import "./ERC20Mintable.sol";
+import "./erc20/ERC20.sol";
+import "./erc20/ERC20Detailed.sol";
+import "./erc20/ERC20Mintable.sol";
 import "openzeppelin-solidity/math/SafeMath.sol";
 import "openzeppelin-solidity/ownership/Ownable.sol";
 
@@ -28,7 +28,7 @@ contract EOPT is ERC20, ERC20Detailed, ERC20Mintable {
     }
 
     function() public payable {
-        
+        revert();
     }
 
 

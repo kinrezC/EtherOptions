@@ -40,8 +40,7 @@ contract EOPTFactor {
         _expirationBlocks.push(expirationBlock);
 
         emit LOG_NewContract(expirationBlock, _proxy, contractNumber, msg.sender, daiPrice);
-
-
     }
 
 }
+ 
