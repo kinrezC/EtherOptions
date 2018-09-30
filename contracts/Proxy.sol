@@ -8,6 +8,7 @@ contract Proxy is ERC20, ERC20Detailed {
     using SafeMath for uint;
 
     mapping (address => bool) private _isOptionsContract;
+    mapping (address => bool) private _isExpired;
     mapping (address => uint) private _balances;
     mapping (uint => address) private _contractNumber;
     address[] private optionTypes;
@@ -69,7 +70,7 @@ contract Proxy is ERC20, ERC20Detailed {
     }
 
     function mintOption(address optionAddr, uint amount) external {
-        require(_balances[msg.sender] >= amount);
+        require(_balances[msg.sender] >= amount * 10**18);
 
     }
 

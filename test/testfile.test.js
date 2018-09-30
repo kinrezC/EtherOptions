@@ -118,4 +118,6 @@ contract("Factory, Proxy, EOPT", accounts => {
     console.log(expectedAddress);
     assert.equal(expectedAddress, storedAddress);
   });
+
+  it("EOPT Contract: Mints new options when called by proxy contract", async () => {});
 });
