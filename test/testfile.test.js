@@ -19,8 +19,17 @@ contract("Factory", accounts => {
   it("Can mint new options contracts", async () => {
     await factoryContract.createContract(10000, 500);
     let eopt = await factoryContract.eoptContracts(0);
-    console.log("eopt address: ", eopt);
     eoptContract = await EOPT.at(eopt);
     assert.equal(eoptContract.address, eopt);
+  });
+
+  it("Can correctly fetch option minter address", async () => {
+    let optionMinter = await factoryContract.optionMinter(eoptContract.address);
+    assert.equal(optionMinter, accounts[0]);
+  });
+
+  it("Can correctly fetch option contract at index 0", async () => {
+    let optionAddress = await factoryContract.eoptContracts(0);
+    assert.equal(optionAddress, eoptContract.address);
   });
 });

@@ -6,15 +6,15 @@ import "./math/SafeMath.sol";
 contract Proxy is Ownable {
     using SafeMath for uint;
 
-    address[] private optionTypes;
     mapping (address => bool) private _isNotExpired;
     mapping (address => bool) private _isOptionsContract;
     mapping (address => uint) private _balances;
     mapping (uint => address) private _contractNumber;
+    address[] private optionTypes;
     uint private _totalSupply;
     address private _factoryContract;
 
-    event LOG_OPTION(address indexed optionAddr, uint indexed optionNumber);
+    event LOG_OPTION (address indexed optionAddr, uint indexed optionNumber);
 
     modifier isNotExpired() {
         require(_isNotExpired[msg.sender] == true);
@@ -36,6 +36,10 @@ contract Proxy is Ownable {
 
     function factoryContract() public view returns (address) {
         return _factoryContract;
+    }
+
+    function getBalance(address addr) public view returns (uint) {
+        return _balances[addr];
     }
 
     function() public payable {
