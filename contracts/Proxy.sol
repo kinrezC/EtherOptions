@@ -3,15 +3,16 @@ pragma solidity ^0.4.24;
 import "./math/SafeMath.sol";
 import "./erc20/ERC20.sol";
 import "./erc20/ERC20Detailed.sol";
+import "./EOPT.sol";
 
 contract Proxy is ERC20, ERC20Detailed {
     using SafeMath for uint;
 
     mapping (address => bool) private _isOptionsContract;
-    mapping (address => bool) private _isExpired;
     mapping (address => uint) private _balances;
     mapping (uint => address) private _contractNumber;
-    address[] private optionTypes;
+
+    uint private _optionsMinted;
     uint private _totalSupply;
     address private _factoryContract;
 
@@ -61,16 +62,20 @@ contract Proxy is ERC20, ERC20Detailed {
         address(msg.sender).transfer(amount);
     }
 
-    function newOptionInstance(address optionAddr) external onlyFactory {
-        _contractNumber[optionTypes.length] = optionAddr;
-        uint optionNum = optionTypes.length;
-        optionTypes.push(optionAddr);
+    function newOptionIssuerInstance(address optionAddr) external onlyFactory {
+        _optionsMinted += 1;
+        _contractNumber[_optionsMinted] = optionAddr;
 
-        emit LOG_OPTION(optionAddr, optionNum);
+        emit LOG_OPTION(optionAddr, _optionsMinted);
     }
 
     function mintOption(address optionAddr, uint amount) external {
         require(_balances[msg.sender] >= amount * 10**18);
+        require(_isOptionsContract[optionAddr] == true);
+        EOPT eopt = EOPT(optionAddr);
+        bool isExpired = eopt.isExpired();
+        require(isExpired == false);
+        eopt.mintOption(msg.sender, amount);
 
     }
 
