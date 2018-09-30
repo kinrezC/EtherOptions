@@ -111,4 +111,11 @@ contract("Factory, Proxy, EOPT", accounts => {
     let daiPrice = await eoptContract.daiPrice();
     assert.equal(daiPrice, expectedPrice);
   });
+
+  it("EOPT Contract: Fetches the correct contract creator address", async () => {
+    let expectedAddress = accounts[0];
+    let storedAddress = await eoptContract.contractCreator();
+    console.log(expectedAddress);
+    assert.equal(expectedAddress, storedAddress);
+  });
 });
