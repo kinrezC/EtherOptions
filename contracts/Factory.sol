@@ -47,7 +47,7 @@ contract Factory {
         address newContract = new EOPT (
             "EtherOptions", 
             "EOPT", 
-            0, 
+            18, 
             expirationBlock, 
             _proxy, 
             contractNum, 

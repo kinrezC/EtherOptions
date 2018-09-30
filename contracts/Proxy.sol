@@ -6,7 +6,7 @@ import "./math/SafeMath.sol";
 contract Proxy is Ownable {
     using SafeMath for uint;
 
-    mapping (address => bool) private _isNotExpired;
+
     mapping (address => bool) private _isOptionsContract;
     mapping (address => uint) private _balances;
     mapping (uint => address) private _contractNumber;
@@ -15,11 +15,6 @@ contract Proxy is Ownable {
     address private _factoryContract;
 
     event LOG_OPTION (address indexed optionAddr, uint indexed optionNumber);
-
-    modifier isNotExpired() {
-        require(_isNotExpired[msg.sender] == true);
-        _;
-    }
 
     modifier onlyFactory() {
         require(msg.sender == _factoryContract);
