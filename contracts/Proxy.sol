@@ -1,11 +1,11 @@
 pragma solidity ^0.4.24;
 
-import "./ownership/Ownable.sol";
 import "./math/SafeMath.sol";
+import "./erc20/ERC20.sol";
+import "./erc20/ERC20Detailed.sol";
 
-contract Proxy is Ownable {
+contract Proxy is ERC20, ERC20Detailed {
     using SafeMath for uint;
-
 
     mapping (address => bool) private _isOptionsContract;
     mapping (address => uint) private _balances;
@@ -21,7 +21,14 @@ contract Proxy is Ownable {
         _;
     }
 
-    constructor(address factory) public {
+    constructor(address factory) 
+    ERC20() 
+    ERC20Detailed(
+        "Wrapped Ether", 
+        "WETH", 
+        18
+    ) 
+    public {
         _factoryContract = factory;
     }
 
@@ -59,6 +66,11 @@ contract Proxy is Ownable {
         optionTypes.push(optionAddr);
 
         emit LOG_OPTION(optionAddr, optionNum);
+    }
+
+    function mintOption(address optionAddr, uint amount) external {
+        require(_balances[msg.sender] >= amount);
+
     }
 
 }
