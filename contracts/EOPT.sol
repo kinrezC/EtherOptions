@@ -48,6 +48,7 @@ contract EOPT is ERC20, ERC20Detailed, ERC20Mintable {
         _contractNumber = contractNumber;
         _contractCreator = contractCreator;
         _daiPrice = daiPrice;
+        _isExpired = false;
     }
 
     function contractNumber() public view returns (uint) {
@@ -70,12 +71,17 @@ contract EOPT is ERC20, ERC20Detailed, ERC20Mintable {
         return _isExpired;
     }
 
+    function assertMinter() external onlyProxy {
+        require(!isMinter(msg.sender));
+        addMinter(_proxyAddr);
+    }
+
     function assertMintingFinished() onlyIfExpired public returns (bool) {
         require(now >= _expirationBlock);
         finishMinting();
     }
 
-    function mintOption(address owner, uint amount) public onlyProxy {
+    function mintOption(address owner, uint amount) external onlyProxy {
         if (now >= _expirationBlock) {
             _isExpired = true;
         }

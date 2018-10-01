@@ -119,5 +119,16 @@ contract("Factory, Proxy, EOPT", accounts => {
     assert.equal(expectedAddress, storedAddress);
   });
 
-  it("EOPT Contract: Mints new options when called by proxy contract", async () => {});
+  it("EOPT Contract: Mints new options when called by proxy contract", async () => {
+    let balance = await proxyContract.getBalance(accounts[0]);
+    let balanceInEther = web3.fromWei(balance, "ether").toNumber();
+    console.log("Current balance: ", balanceInEther);
+    await proxyContract.mintOption(eoptContract.address, 1, {
+      from: accounts[0],
+      gasPrice: 0
+    });
+    let eoptBalance = await eoptContract.getBalance(accounts[0]);
+    let eoptBalanceInEther = web3.fromWei(eoptBalance, "ether").toNumber();
+    console.log("Ether options owned: ", eoptBalanceInEther);
+  });
 });

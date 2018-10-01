@@ -5,10 +5,11 @@ import "./erc20/ERC20.sol";
 import "./erc20/ERC20Detailed.sol";
 import "./EOPT.sol";
 
-contract Proxy is ERC20, ERC20Detailed {
+contract Proxy  {
     using SafeMath for uint;
 
     mapping (address => bool) private _isOptionsContract;
+    mapping (address => bool) private _isMinter;
     mapping (address => uint) private _balances;
     mapping (uint => address) private _contractNumber;
 
@@ -23,14 +24,7 @@ contract Proxy is ERC20, ERC20Detailed {
         _;
     }
 
-    constructor(address factory) 
-    ERC20() 
-    ERC20Detailed(
-        "Wrapped Ether", 
-        "WETH", 
-        18
-    ) 
-    public {
+    constructor(address factory) public {
         _factoryContract = factory;
     }
 
@@ -45,8 +39,12 @@ contract Proxy is ERC20, ERC20Detailed {
     function getBalance(address addr) public view returns (uint) {
         return _balances[addr];
     }
+    
+    function optionsMinted() public view returns (uint) {
+        return _optionsMinted;
+    }
 
-    function() public payable {
+    function() external payable {
         deposit();
     }
 
@@ -65,18 +63,28 @@ contract Proxy is ERC20, ERC20Detailed {
     function newOptionIssuerInstance(address optionAddr) external onlyFactory {
         _optionsMinted += 1;
         _contractNumber[_optionsMinted] = optionAddr;
+        _isOptionsContract[optionAddr] = true;
 
         emit LOG_OPTION(optionAddr, _optionsMinted);
+    }
+
+    function assertIsMinter(address optionAddr) internal {
+        require(_isOptionsContract[optionAddr]);
+        EOPT eopt = EOPT(optionAddr);
+        eopt.assertMinter();
+        _isMinter[optionAddr] = true;
     }
 
     function mintOption(address optionAddr, uint amount) external {
         require(_balances[msg.sender] >= amount * 10**18);
         require(_isOptionsContract[optionAddr] == true);
         EOPT eopt = EOPT(optionAddr);
-        bool isExpired = eopt.isExpired();
-        require(isExpired == false);
-        eopt.mintOption(msg.sender, amount);
-
+        if (_isMinter[optionAddr]) {
+            eopt.mintOption(msg.sender, amount);
+        }
+        else {
+            assertIsMinter(optionAddr);
+        }
     }
 
 }

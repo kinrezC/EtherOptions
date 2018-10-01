@@ -54,7 +54,7 @@ contract Factory {
             msg.sender, 
             daiPrice
         );
-        proxy.newOptionInstance(newContract);
+        proxy.newOptionIssuerInstance(newContract);
         _optionMinter[newContract] = msg.sender;
         _eoptContracts.push(newContract);
 
