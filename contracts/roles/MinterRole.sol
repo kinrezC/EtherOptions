@@ -9,7 +9,7 @@ contract MinterRole {
     event MinterRemoved(address indexed account);
 
     Roles.Role private minters;
-
+    uint8 numMinters = 0;
 
     modifier onlyMinter() {
         require(isMinter(msg.sender));
@@ -21,6 +21,8 @@ contract MinterRole {
     }
 
     function addMinter(address account) public {
+        require(numMinters == 0);
+        numMinters += 1;
         minters.add(account);
         emit MinterAdded(account);
     }

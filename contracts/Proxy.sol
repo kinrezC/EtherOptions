@@ -3,7 +3,7 @@ pragma solidity ^0.4.24;
 import "./math/SafeMath.sol";
 import "./erc20/ERC20.sol";
 import "./erc20/ERC20Detailed.sol";
-import "./EOPT.sol";
+import "./interfaces/IEOPT.sol";
 
 contract Proxy  {
     using SafeMath for uint;
@@ -70,7 +70,7 @@ contract Proxy  {
 
     function assertIsMinter(address optionAddr) internal {
         require(_isOptionsContract[optionAddr]);
-        EOPT eopt = EOPT(optionAddr);
+        IEOPT eopt = EOPT(optionAddr);
         eopt.assertMinter();
         _isMinter[optionAddr] = true;
     }
@@ -78,7 +78,7 @@ contract Proxy  {
     function mintOption(address optionAddr, uint amount) external {
         require(_balances[msg.sender] >= amount * 10**18);
         require(_isOptionsContract[optionAddr] == true);
-        EOPT eopt = EOPT(optionAddr);
+        IEOPT eopt = IEOPT(optionAddr);
         if (_isMinter[optionAddr]) {
             eopt.mintOption(msg.sender, amount);
         }
